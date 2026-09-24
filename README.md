@@ -8,7 +8,9 @@ Badges follow the Studio locale. Bundles ship for `en-US` and `nb-NO`.
 
 ## Install
 
-Not published to npm. Copy `src/` into your Studio's plugins folder, or install from GitHub:
+Not published to npm. The simplest route is the single file at [`standalone/publishTimestamps.tsx`](./standalone/publishTimestamps.tsx): copy it into your Studio's plugins folder and import `publishTimestamps` from there. It depends on `sanity` only.
+
+Alternatively install from GitHub:
 
 ```sh
 npm install github:Ojself/sanity-plugin-publish-timestamps
