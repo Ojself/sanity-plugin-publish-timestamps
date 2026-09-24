@@ -5,7 +5,7 @@ import {HideRelativeStatus} from './HideRelativeStatus'
 import {enUS, nbNO} from './i18n'
 
 export interface PublishTimestampsOptions {
-  /** Document field holding the first-publish timestamp. Set to `false` to skip the badge. Default: `firstPublishedAt` */
+  /** Document field holding the first-publish timestamp. Set to `false` to skip the badge. Default: `firstPublished` */
   firstPublishedField?: string | false
   /** Intl.DateTimeFormat options, resolved against the Studio locale. Default: short date, medium time */
   format?: UseDateTimeFormatOptions
@@ -15,7 +15,7 @@ export interface PublishTimestampsOptions {
 
 export const publishTimestamps = definePlugin<PublishTimestampsOptions | void>((options) => {
   const {
-    firstPublishedField = 'firstPublishedAt',
+    firstPublishedField = 'firstPublished',
     format = DEFAULT_FORMAT,
     hideRelativeStatus = true,
   } = options ?? {}

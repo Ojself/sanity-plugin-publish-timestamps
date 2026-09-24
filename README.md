@@ -8,8 +8,10 @@ Badges follow the Studio locale. Bundles ship for `en-US` and `nb-NO`.
 
 ## Install
 
+Not published to npm. Copy `src/` into your Studio's plugins folder, or install from GitHub:
+
 ```sh
-npm install sanity-plugin-publish-timestamps
+npm install github:Ojself/sanity-plugin-publish-timestamps
 ```
 
 ```ts
@@ -26,7 +28,7 @@ export default defineConfig({
 
 ```ts
 publishTimestamps({
-  firstPublishedField: 'firstPublishedAt', // string | false, default 'firstPublishedAt'
+  firstPublishedField: 'firstPublished', // string | false, default 'firstPublished'
   format: {dateStyle: 'short', timeStyle: 'medium'}, // Intl.DateTimeFormatOptions
   hideRelativeStatus: true, // hide the built-in relative footer line
 })
@@ -34,31 +36,8 @@ publishTimestamps({
 
 ## First published needs a field
 
-Sanity keeps no first-publish timestamp. The published document's `_createdAt` is copied from the draft, so it reflects when the draft was created, not when it went live. The plugin reads `firstPublishedField` from the published document (falling back to the draft), so the field has to be set by your publish action.
+Sanity keeps no first-publish timestamp. The published document's `_createdAt` is copied from the draft, so it reflects when the draft was created, not when it went live. The plugin reads `firstPublishedField` (default `firstPublished`) from the published document, falling back to the draft, so something has to write that field.
 
-Minimal wrapper around the built-in publish action:
+Use the [First published timestamp function](https://www.sanity.io/recipes/first-published-timestamp-function-7a787908) recipe. It is a Sanity Function on the `create` event, filtered on `!defined(firstPublished)`, that patches `firstPublished` with `setIfMissing`. Functions only fire for published documents, so `create` means first publish, and it covers every publish path: Studio, API, scheduled publishing, releases. Widen the recipe's `_type == 'post'` filter to your own document types and the default field name here matches it.
 
-```ts
-import {type DocumentActionComponent, useDocumentOperation} from 'sanity'
-
-export function withPublishTimestamps(Action: DocumentActionComponent): DocumentActionComponent {
-  const Wrapped: DocumentActionComponent = (props) => {
-    const {patch} = useDocumentOperation(props.id, props.type)
-    const inner = Action(props)
-    if (!inner) return null
-    return {
-      ...inner,
-      onHandle: () => {
-        const now = new Date().toISOString()
-        // setIfMissing keeps the first publish time across republishes
-        patch.execute([{setIfMissing: {firstPublishedAt: now}}, {set: {lastPublishedAt: now}}])
-        inner.onHandle?.()
-      },
-    }
-  }
-  Wrapped.action = Action.action
-  return Wrapped
-}
-```
-
-Add `firstPublishedAt` (and optionally `lastPublishedAt`) as hidden or read-only `datetime` fields on the document types.
+Add `firstPublished` as a hidden or read-only `datetime` field on those document types.
