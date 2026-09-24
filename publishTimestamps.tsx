@@ -1,4 +1,4 @@
-// Standalone copy of sanity-plugin-publish-timestamps. Drop into your plugins folder and add
+// Drop into your plugins folder and add
 // `publishTimestamps()` to the workspace plugins list. Requires `sanity` only.
 import {
   definePlugin,
